@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetroUnblocked - Free Arcade & Puzzle Games</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                        cardHover: '#334155',
+                        accentCyan: '#06b6d4',
+                        accentPurple: '#8b5cf6',
+                        neonGreen: '#10b981'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-darkBg/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <a href="#" onclick="resetFilters()" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-gamepad text-white text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">RETRO</span>
+                    <span class="text-xl font-light text-slate-200">UNBLOCKED</span>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md hidden md:block">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search 20+ games (e.g., Pacman, Tetris, 2048)..." 
+                           class="w-full pl-10 pr-4 py-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
+                </div>
+            </div>
+
+            <!-- Stats / Info Badge -->
+            <div class="hidden lg:flex items-center gap-2 bg-slate-800/50 border border-slate-700/50 px-4 py-2 rounded-xl text-xs font-medium text-slate-300">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>All Games Unblocked & Safe</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Search Bar Bar -->
+    <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 md:hidden">
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input type="text" id="mobileSearchInput" oninput="handleSearchMobile()" placeholder="Search games..." 
+                   class="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-cyan-500">
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Category Filters -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+            <button onclick="filterCategory('All')" id="cat-All" class="category-btn px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20">
+                <i class="fa-solid fa-fire mr-2"></i>All Games
+            </button>
+            <button onclick="filterCategory('Arcade')" id="cat-Arcade" class="category-btn px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-cardBg hover:bg-cardHover text-slate-300 border border-slate-800">
+                <i class="fa-solid fa-ghost mr-2 text-yellow-400"></i>Arcade
+            </button>
+            <button onclick="filterCategory('Puzzle')" id="cat-Puzzle" class="category-btn px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-cardBg hover:bg-cardHover text-slate-300 border border-slate-800">
+                <i class="fa-solid fa-puzzle-piece mr-2 text-cyan-400"></i>Puzzle
+            </button>
+            <button onclick="filterCategory('Action')" id="cat-Action" class="category-btn px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-cardBg hover:bg-cardHover text-slate-300 border border-slate-800">
+                <i class="fa-solid fa-bolt mr-2 text-purple-400"></i>Action
+            </button>
+            <button onclick="filterCategory('Sports')" id="cat-Sports" class="category-btn px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-cardBg hover:bg-cardHover text-slate-300 border border-slate-800">
+                <i class="fa-solid fa-football mr-2 text-emerald-400"></i>Sports
+            </button>
+        </div>
+
+        <!-- Featured Banner / Header text -->
+        <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 id="sectionTitle" class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Popular Games</h1>
+                <p id="sectionSubtitle" class="text-sm text-slate-400 mt-1">Play smooth HTML5 and retro classics instantly without downloads.</p>
+            </div>
+            <div id="gameCountBadge" class="text-xs font-semibold text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50 self-start md:self-auto">
+                Showing all games
+            </div>
+        </div>
+
+        <!-- Games Grid -->
+        <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- Empty State (hidden by default) -->
+        <div id="noResults" class="hidden text-center py-20">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-3xl">
+                <i class="fa-solid fa-ghost"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-300">No games found</h3>
+            <p class="text-sm text-slate-500 mt-1">Try checking your spelling or search for another game category.</p>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-xl text-sm font-medium transition-colors border border-slate-700">
+                Clear Filters
+            </button>
+        </div>
+    </main>
+
+    <!-- Game Player Modal -->
+    <div id="gameModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col">
+        <!-- Modal Top Bar -->
+        <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between shadow-lg">
+            <div class="flex items-center gap-3">
+                <button onclick="closeGameModal()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium flex items-center gap-2 transition-colors border border-slate-700">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span class="hidden sm:inline">Back to Games</span>
+                </button>
+                <div>
+                    <h2 id="modalGameTitle" class="text-base sm:text-lg font-bold text-white leading-tight">Game Title</h2>
+                    <span id="modalGameCategory" class="text-xs text-cyan-400 font-medium">Category</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button onclick="toggleFullscreen()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium flex items-center gap-2 transition-colors border border-slate-700">
+                    <i class="fa-solid fa-expand"></i>
+                    <span class="hidden sm:inline">Fullscreen</span>
+                </button>
+                <button onclick="closeGameModal()" class="w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center transition-colors border border-red-500/20">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Player Main Body -->
+        <div class="flex-1 flex flex-col lg:flex-row h-[calc(100vh-65px)] overflow-hidden">
+            <!-- Iframe Container -->
+            <div id="iframeWrapper" class="flex-1 bg-black flex items-center justify-center relative overflow-hidden">
+                <iframe id="gameIframe" src="" class="w-full h-full border-0" allowfullscreen></iframe>
+            </div>
+
+            <!-- Game Info Sidebar -->
+            <div class="w-full lg:w-80 bg-slate-900/90 border-t lg:border-t-0 lg:border-l border-slate-800 p-5 flex flex-col gap-4 overflow-y-auto">
+                <div>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-1">About This Game</h3>
+                    <p id="modalGameDesc" class="text-sm text-slate-300 leading-relaxed">Description goes here...</p>
+                </div>
+
+                <div class="border-t border-slate-800 pt-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">Controls</h3>
+                    <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/50 text-xs text-slate-300 space-y-1.5">
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-keyboard text-cyan-400"></i> Use keyboard arrows or mouse clicks</div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-expand text-purple-400"></i> Press Fullscreen for best experience</div>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                    <span>RetroUnblocked Safe Player</span>
+                    <span class="text-emerald-400 font-medium"><i class="fa-solid fa-shield-halved mr-1"></i> Secure</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div>
+                <span class="font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">RetroUnblocked</span>
+                <p class="text-xs text-slate-500 mt-1">Your go-to destination for classic retro and arcade games.</p>
+            </div>
+            <p class="text-xs text-slate-500">&copy; 2026 RetroUnblocked. All games hosted via safe public embeds.</p>
+        </div>
+    </footer>
+
+    <!-- Embedded JSON Data & Frontend Logic -->
+    <script>
+        // Game Database JSON structure
+        const gamesData = [
+            {
+                id: "pacman",
+                title: "Pac-Man Classic",
+                category: "Arcade",
+                description: "Navigate the maze, eat all the dots, and avoid the colorful ghosts in this timeless arcade masterpiece.",
+                embedUrl: "https://freemeteo.github.io/pacman/",
+                thumbnailColor: "from-amber-500 to-yellow-600",
+                icon: "fa-ghost"
+            },
+            {
+                id: "tetris",
+                title: "Retro Tetris",
+                category: "Puzzle",
+                description: "Fit falling geometric blocks together to clear lines and achieve the highest score without stacking to the top.",
+                embedUrl: "https://tetris.com/play-tetris",
+                thumbnailColor: "from-cyan-500 to-blue-600",
+                icon: "fa-cubes"
+            },
+            {
+                id: "2048",
+                title: "2048 Puzzle",
+                category: "Puzzle",
+                description: "Slide numbered tiles on a grid to combine them and create the elusive 2048 tile.",
+                embedUrl: "https://play2048.co/",
+                thumbnailColor: "from-orange-500 to-amber-600",
+                icon: "fa-table-cells"
+            },
+            {
+                id: "flappybird",
+                title: "Flappy Bird",
+                category: "Arcade",
+                description: "Tap to flap your wings and guide the bird safely through narrow pipe gaps without crashing.",
+                embedUrl: "https://surgio.github.io/flappy-bird/",
+                thumbnailColor: "from-yellow-400 to-emerald-500",
+                icon: "fa-dove"
+            },
+            {
+                id: "snake",
+                title: "Classic Snake",
+                category: "Arcade",
+                description: "Eat food to grow longer, but avoid hitting the walls or your own growing tail in this nostalgic favorite.",
+                embedUrl: "https://patorjk.com/games/snake/",
+                thumbnailColor: "from-emerald-500 to-teal-700",
+                icon: "fa-worm"
+            },
+            {
+                id: "dinosaur",
+                title: "Dino Runner",
+                category: "Action",
+                description: "Jump over cacti and dodge pterodactyls in the famous offline dinosaur runner adventure.",
+                embedUrl: "https://waylonwalker.com/t-rex-runner/",
+                thumbnailColor: "from-slate-600 to-slate-800",
+                icon: "fa-paw"
+            },
+            {
+                id: "pong",
+                title: "Retro Pong",
+                category: "Sports",
+                description: "The grandfather of video games! Defeat the computer paddle by bouncing the ball past its defense.",
+                embedUrl: "https://www.ponggame.org/",
+                thumbnailColor: "from-indigo-500 to-purple-600",
+                icon: "fa-table-tennis-paddle-ball"
+            },
+            {
+                id: "breakout",
+                title: "Brick Breaker",
+                category: "Action",
+                description: "Use your paddle to bounce the ball and smash down colored bricks in cascading levels.",
+                embedUrl: "https://www.free-online-games.co.in/breakout/",
+                thumbnailColor: "from-rose-500 to-pink-600",
+                icon: "fa-basketball"
+            },
+            {
+                id: "chess",
+                title: "Classic Chess",
+                category: "Puzzle",
+                description: "Test your tactical strategy against smart AI or friends in the royal game of chess.",
+                embedUrl: "https://lichess.org/embed/ot?theme=auto&bg=auto",
+                thumbnailColor: "from-blue-600 to-indigo-900",
+                icon: "fa-chess-knight"
+            },
+            {
+                id: "minesweeper",
+                title: "Minesweeper",
+                category: "Puzzle",
+                description: "Uncover safe squares while avoiding hidden landmines using logic and numbers as clues.",
+                embedUrl: "https://minesweeperonline.com/",
+                thumbnailColor: "from-zinc-600 to-zinc-800",
+                icon: "fa-bomb"
+            },
+            {
+                id: "wordle",
+                title: "Word Puzzle",
+                category: "Puzzle",
+                description: "Guess the hidden 5-letter word within six tries with helpful color-coded hints.",
+                embedUrl: "https://www.nytimes.com/games/wordle/index.html",
+                thumbnailColor: "from-emerald-600 to-green-800",
+                icon: "fa-font"
+            },
+            {
+                id: "basketball",
+                title: "Hoops Legend",
+                category: "Sports",
+                description: "Shoot hoops under varying challenges and time limits to set your high score.",
+                embedUrl: "https://basketball-io.github.io/",
+                thumbnailColor: "from-amber-600 to-red-600",
+                icon: "fa-basketball"
+            }
+        ];
+
+        let activeCategory = 'All';
+        let searchQuery = '';
+
+        // Initialize application on load
+        window.onload = function() {
+            renderGames(gamesData);
+        };
+
+        // Render game cards dynamically
+        function renderGames(games) {
+            const grid = document.getElementById('gamesGrid');
+            const noResults = document.getElementById('noResults');
+            const countBadge = document.getElementById('gameCountBadge');
+            
+            grid.innerHTML = '';
+            countBadge.innerText = `Showing ${games.length} game${games.length === 1 ? '' : 's'}`;
+
+            if (games.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            games.forEach(game => {
+                const card = document.createElement('div');
+                card.className = "group bg-cardBg rounded-2xl border border-slate-800 hover:border-slate-700 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/5 hover:-translate-y-1";
+                
+                card.innerHTML = `
+                    <div class="h-36 bg-gradient-to-br ${game.thumbnailColor} p-4 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 text-white/10 text-8xl pointer-events-none group-hover:scale-110 transition-transform">
+                            <i class="fa-solid ${game.icon}"></i>
+                        </div>
+                        <div class="flex items-center justify-between z-10">
+                            <span class="px-2.5 py-1 rounded-lg bg-black/30 backdrop-blur-md text-xs font-semibold text-white">
+                                ${game.category}
+                            </span>
+                            <div class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white text-sm">
+                                <i class="fa-solid ${game.icon}"></i>
+                            </div>
+                        </div>
+                        <div class="z-10">
+                            <h3 class="font-bold text-lg text-white drop-shadow-sm">${game.title}</h3>
+                        </div>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between gap-4">
+                        <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${game.description}</p>
+                        <button onclick="launchGame('${game.id}')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-white text-slate-200 font-semibold text-xs transition-all duration-200 flex items-center justify-center gap-2 group-hover:bg-cyan-500/10 group-hover:text-cyan-400 border border-slate-700/80">
+                            <i class="fa-solid fa-play"></i> Play Now
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter by category
+        function filterCategory(category) {
+            activeCategory = category;
+            
+            // Update button styles
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.className = "category-btn px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-cardBg hover:bg-cardHover text-slate-300 border border-slate-800";
+            });
+            const activeBtn = document.getElementById(`cat-${category}`);
+            if (activeBtn) {
+                activeBtn.className = "category-btn px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20";
+            }
+
+            // Update section title
+            document.getElementById('sectionTitle').innerText = category === 'All' ? 'Popular Games' : `${category} Games`;
+            
+            applyFilters();
+        }
+
+        // Search filtering handling
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+            document.getElementById('mobileSearchInput').value = searchQuery;
+            applyFilters();
+        }
+
+        function handleSearchMobile() {
+            searchQuery = document.getElementById('mobileSearchInput').value.toLowerCase().trim();
+            document.getElementById('searchInput').value = searchQuery;
+            applyFilters();
+        }
+
+        // Combine category and search filters
+        function applyFilters() {
+            let filtered = gamesData;
+
+            if (activeCategory !== 'All') {
+                filtered = filtered.filter(g => g.category.toLowerCase() === activeCategory.toLowerCase());
+            }
+
+            if (searchQuery !== '') {
+                filtered = filtered.filter(g => 
+                    g.title.toLowerCase().includes(searchQuery) || 
+                    g.description.toLowerCase().includes(searchQuery) ||
+                    g.category.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            renderGames(filtered);
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            filterCategory('All');
+        }
+
+        // Launch game in modal iframe player
+        function launchGame(gameId) {
+            const game = gamesData.find(g => g.id === gameId);
+            if (!game) return;
+
+            document.getElementById('modalGameTitle').innerText = game.title;
+            document.getElementById('modalGameCategory').innerText = game.category;
+            document.getElementById('modalGameDesc').innerText = game.description;
+            
+            const iframe = document.getElementById('gameIframe');
+            iframe.src = game.embedUrl;
+
+            document.getElementById('gameModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close game modal
+        function closeGameModal() {
+            const modal = document.getElementById('gameModal');
+            modal.classList.add('hidden');
+            document.getElementById('gameIframe').src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fullscreen toggle support
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('iframeWrapper');
+            if (!document.fullscreenElement) {
+                if (wrapper.requestFullscreen) {
+                    wrapper.requestFullscreen();
+                } else if (wrapper.webkitRequestFullscreen) {
+                    wrapper.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
